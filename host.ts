@@ -1,5 +1,6 @@
 import { experimental_acpProviderBridge as acp } from '@get-bb/plugin-sdk/provider-bridge/acp';
 import { experimental_defineProviderBridge } from '@get-bb/plugin-sdk/provider-bridge';
+import { normalizeReasoningOptions } from './src/reasoning.js';
 import { asRecord, prepareHostOptions } from './src/credentials.js';
 
 let hostDataDir: string | undefined;
@@ -32,6 +33,7 @@ export const experimental_providerBridge = experimental_defineProviderBridge({
         return;
       }
     }
+    normalizeReasoningOptions(execution);
     acp.handleLine(JSON.stringify(message));
   },
   onClose: () => acp.onClose?.(),

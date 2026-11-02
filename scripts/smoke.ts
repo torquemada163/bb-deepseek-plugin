@@ -7,6 +7,8 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { parse } from 'dotenv';
 import { experimental_createBridgeJsonRpcTestHarness as harnessFor } from '@get-bb/plugin-sdk/provider-bridge/testing';
 import type { ProviderBridgeEntry } from '@get-bb/plugin-sdk/provider-bridge';
+import { observeApi } from './api-observer.js';
+import { NATIVE_REASONING_LEVELS } from '../src/reasoning.js';
 import { bridgeOptions, readSettings } from '../src/config.js';
 // @ts-expect-error Generated JavaScript has no declaration file.
 const { experimental_providerBridge: bridge } = await import('../dist/host.js') as { experimental_providerBridge: ProviderBridgeEntry };
@@ -19,7 +21,8 @@ const note = 'NOTE_' + randomBytes(8).toString('hex');
 const tools = process.env.DEEPSEEK_SMOKE_TOOLS === '1';
 bridge.start?.({ pluginId: 'deepseek', dataDir: dir, tempDir: dir });
 const harness = harnessFor(bridge.handleLine);
-const providerOptions = bridgeOptions(readSettings({ envFile, executable: process.env.DEEPSEEK_EXECUTABLE ?? resolve('node_modules/opencode-ai/bin/opencode.exe') }));
+const observer = process.env.DEEPSEEK_SMOKE_INSPECT === '1' ? await observeApi(dir, process.env.DEEPSEEK_SMOKE_MODEL ?? 'deepseek/deepseek-flash', process.env.DEEPSEEK_SMOKE_REASONING ?? 'high') : undefined;
+const providerOptions = bridgeOptions(readSettings({ envFile, baseUrl: observer?.baseUrl, executable: process.env.DEEPSEEK_EXECUTABLE ?? resolve('node_modules/opencode-ai/bin/opencode.exe') }));
 const options = { model: process.env.DEEPSEEK_SMOKE_MODEL ?? 'deepseek/deepseek-flash', reasoningLevel: process.env.DEEPSEEK_SMOKE_REASONING ?? 'high', permissionMode: 'accept-edits', permissionScope: 'workspace', approvalReviewer: 'user', permissionEscalation: 'deny', providerOptions };
 let counter = 0;
 let providerThreadId: unknown;
@@ -61,8 +64,7 @@ try {
   const available = catalog.models as { id: string; supportedReasoningEfforts: { reasoningEffort: string }[] }[];
   assert.deepEqual(available.map(m => m.id).sort(), ['deepseek/deepseek-flash', 'deepseek/deepseek-v4-pro']);
   for (const m of available) {
-    assert.equal(m.supportedReasoningEfforts.some(e => e.reasoningEffort === 'low'), false);
-    assert.ok(m.supportedReasoningEfforts.some(e => e.reasoningEffort === 'max'));
+    for (const level of NATIVE_REASONING_LEVELS) assert.ok(m.supportedReasoningEfforts.some(e => e.reasoningEffort === level), `Missing ${level} for ${m.id}`);
   }
   assert.ok(available.some(m => m.id === options.model));
   process.stderr.write(`Catalog PASS; model ${options.model}; reasoning ${options.reasoningLevel}\n`);
@@ -78,8 +80,10 @@ try {
   await request('thread/stop', { threadId: 'deepseek-smoke', providerThreadId, activeTurnId: null, intent: 'release' });
   const resumed = await request('thread/resume', { threadId: 'deepseek-smoke', providerThreadId, cwd: dir, instructionMode: 'append', options });
   providerThreadId = resumed.providerThreadId;
-  assert.ok((await turn('Reply with only our session note from the previous turn. Do not use tools or read files.', 'creq_ds2345678a')).includes(note));
+  const recalled = await turn('What is our session note from the previous turn? Reply with only the full NOTE_ token, including its complete hexadecimal suffix, copied verbatim from conversation history. Do not use tools or read files.', 'creq_ds2345678a');
+  assert.ok(recalled.includes(note), 'Session note mismatch: ' + redact(JSON.stringify(recalled.slice(0, 200))));
   process.stderr.write('Session restore and second completed turn: PASS\n');
+  observer?.verify();
   success = true;
 } catch (error) {
   process.stderr.write(redact(String(error)) + '\n');
@@ -87,8 +91,8 @@ try {
   if (providerThreadId) {
     try { await request('thread/stop', { threadId: 'deepseek-smoke', providerThreadId, activeTurnId: null, intent: 'release' }); } catch { /* preserve the original result */ }
   }
-  bridge.onClose?.();
   harness.restore();
+  await observer?.close();
   rmSync(dir, { recursive: true, force: true });
   process.exit(success ? 0 : 1);
 }

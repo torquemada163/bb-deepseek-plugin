@@ -1,4 +1,5 @@
 import type { BbPluginApi, PluginProviderDeclaration } from '@get-bb/plugin-sdk';
+import { REASONING_LEVELS } from './src/reasoning.js';
 import { bridgeOptions, DEFAULT_BASE_URL, MODELS, PROVIDER_ID, readSettings } from './src/config.js';
 
 export default async function plugin(bb: BbPluginApi) {
@@ -24,10 +25,10 @@ export default async function plugin(bb: BbPluginApi) {
       capabilities: {
         supportsServiceTier: false, supportsNativeUserQuestion: false, fork: 'none',
         supportsManualCompaction: false, supportsThreadArchive: false, supportsThreadRename: false,
-        permissionModes: ['accept-edits', 'full'], reasoningLevels: ['high', 'max'],
+        permissionModes: ['accept-edits', 'full'], reasoningLevels: [...REASONING_LEVELS],
       },
       completedTurnDisplay: 'flat',
-      reasoningLevels: [{ id: 'high', label: 'High' }, { id: 'max', label: 'Max' }],
+      reasoningLevels: REASONING_LEVELS.map(id => ({ id, label: ({ none: 'Off', minimal: 'Minimal → Low', low: 'Low', medium: 'Medium → High', high: 'High', xhigh: 'Extra High → High', max: 'Max', ultra: 'Ultra → Max' })[id] })),
       composerActions: [],
       models: { scope: 'host', fallback: [] },
       deriveProviderOptions(context) { return bridgeOptions(readSettings(context.settings)); },

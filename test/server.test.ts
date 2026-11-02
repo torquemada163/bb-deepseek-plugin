@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createFakePluginHost } from '@get-bb/plugin-sdk/testing';
 import plugin from '../server.js';
+import { REASONING_LEVELS } from '../src/reasoning.js';
 
 test('registers only DeepSeek and propagates settings without credentials', async () => {
   const { bb, harness } = createFakePluginHost({ pluginId: 'deepseek' });
@@ -11,6 +12,8 @@ test('registers only DeepSeek and propagates settings without credentials', asyn
     assert.ok(provider);
     assert.equal(harness.registrations.providerRegistrations.length, 1);
     assert.equal(provider.displayName, 'DeepSeek');
+    assert.deepEqual(provider.capabilities.reasoningLevels, REASONING_LEVELS);
+    assert.ok(provider.reasoningLevels?.some(level => level.id === 'medium'));
     assert.deepEqual(provider.capabilities.permissionModes, ['accept-edits', 'full']);
     await harness.behavior.setSettings({ envFile: '/tmp/deepseek.env', model: 'deepseek-v4-pro' });
     const updated = harness.registrations.providerRegistrations.find(p => p.id === 'deepseek');

@@ -20,10 +20,10 @@ async function main() {
   try {
     const report = await conformance({
       transport: { send: bridge.handleLine, takeMessages: output.takeMessages },
-      providerId: 'deepseek-code',
+      providerId: 'deepseek',
       session: {
         cwd: dir,
-        options: { model: 'deepseek/deepseek-flash', permissionMode: 'accept-edits', permissionScope: 'workspace', approvalReviewer: 'user', permissionEscalation: 'deny', providerOptions: options },
+        options: { model: 'deepseek/deepseek-flash', reasoningLevel: 'medium', permissionMode: 'accept-edits', permissionScope: 'workspace', approvalReviewer: 'user', permissionEscalation: 'deny', providerOptions: options },
         promptInput: [{ type: 'text', text: 'hello', mentions: [] }],
         zeroWorkPromptInput: [{ type: 'text', text: '/noop', mentions: [] }],
       },

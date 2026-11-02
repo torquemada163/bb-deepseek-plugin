@@ -33,6 +33,14 @@ test('host loads a key, isolates OpenCode storage, and configures only the curre
     const config = JSON.parse(env.OPENCODE_CONFIG_CONTENT);
     assert.deepEqual(config.enabled_providers, ['deepseek']);
     assert.deepEqual(config.provider.deepseek.whitelist, ['deepseek-flash', 'deepseek-v4-pro']);
+    for (const model of Object.values(config.provider.deepseek.models) as any[]) {
+      assert.equal(model.variants.none.thinking.type, 'disabled');
+      for (const level of ['low', 'high', 'max']) {
+        assert.equal(model.variants[level].thinking.type, 'enabled');
+        assert.equal(model.variants[level].reasoningEffort, level);
+      }
+      assert.equal(model.variants.default.reasoningEffort, 'high');
+    }
     assert.equal(config.provider.deepseek.options.apiKey, '{env:BB_DEEPSEEK_API_KEY}');
     for (const name of ['XDG_CONFIG_HOME', 'XDG_DATA_HOME', 'XDG_CACHE_HOME', 'XDG_STATE_HOME']) assert.ok(env[name].startsWith(join(dir, 'opencode')));
     assert.equal(env.OPENCODE_DISABLE_PROJECT_CONFIG, 'true');

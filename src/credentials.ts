@@ -30,7 +30,9 @@ export function prepareHostOptions(options: Record<string, unknown>, dataDir: st
     reasoning: true, tool_call: true,
     options: { thinking: { type: 'enabled' }, reasoningEffort: 'high' },
     variants: {
-      low: { disabled: true },
+      default: { thinking: { type: 'enabled' }, reasoningEffort: 'high' },
+      none: { thinking: { type: 'disabled' } },
+      low: { thinking: { type: 'enabled' }, reasoningEffort: 'low' },
       high: { thinking: { type: 'enabled' }, reasoningEffort: 'high' },
       max: { thinking: { type: 'enabled' }, reasoningEffort: 'max' },
     },

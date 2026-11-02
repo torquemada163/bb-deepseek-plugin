@@ -21,7 +21,7 @@ Run **DeepSeek Flash** and **DeepSeek V4 Pro** as a separate provider in [bb](ht
 
 - A **DeepSeek** provider with its own mark in bb's model picker.
 - **Flash** for everyday work and **V4 Pro** for demanding tasks.
-- **High / Max** reasoning controls, supplied through the ACP model catalog.
+- **Off / Low / High / Max** reasoning controls, supplied through the ACP model catalog.
 - File editing, terminal commands, and streamed responses through OpenCode.
 - Multi-turn conversations and restored sessions through ACP.
 - Host-local API credentials and separate OpenCode config, data, cache, and state.
@@ -67,8 +67,8 @@ Start a thread, select **DeepSeek**, choose a model and reasoning level, and sen
 
 | Model | BB model ID | Reasoning |
 | --- | --- | --- |
-| DeepSeek Flash | `deepseek/deepseek-flash` | High / Max |
-| DeepSeek V4 Pro | `deepseek/deepseek-v4-pro` | High / Max |
+| DeepSeek Flash | `deepseek/deepseek-flash` | Off / Low / High / Max |
+| DeepSeek V4 Pro | `deepseek/deepseek-v4-pro` | Off / Low / High / Max |
 
 Flash is the default. To change the default for new threads:
 
@@ -76,7 +76,16 @@ Flash is the default. To change the default for new threads:
 bb plugin config deepseek set model deepseek-v4-pro
 ```
 
-The catalog uses the current API IDs documented by [DeepSeek](https://api-docs.deepseek.com/). Model availability and billing depend on your API account. The ACP catalog may also expose a **Default** reasoning choice, which uses High.
+The catalog uses the current API IDs documented by [DeepSeek](https://api-docs.deepseek.com/). Model availability and billing depend on your API account. **Off** disables thinking; **Default** uses High. Inherited bb settings are accepted before thread creation and mapped as documented by DeepSeek:
+
+| Requested level | DeepSeek behavior |
+| --- | --- |
+| None / Off | Thinking disabled |
+| Minimal / Low | Low |
+| Medium / High / Extra High | High |
+| Max / Ultra | Max |
+
+Minimal is an API alias; bb's provider-level picker does not define that level.
 
 ## How it works
 

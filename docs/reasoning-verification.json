@@ -1,0 +1,171 @@
+{
+  "verifiedAt": "2026-11-02T17:37:06.957Z",
+  "bb": "0.48.1",
+  "opencode": "1.19.5",
+  "results": [
+    {
+      "model": "deepseek-flash",
+      "requested": "default",
+      "actual": "high",
+      "passed": true,
+      "tools": false,
+      "seconds": 6,
+      "verification": "Actual HTTPS parameters: PASS (2 main requests; default \u2192 high)"
+    },
+    {
+      "model": "deepseek-flash",
+      "requested": "high",
+      "actual": "high",
+      "passed": true,
+      "tools": true,
+      "seconds": 9,
+      "verification": "Actual HTTPS parameters: PASS (4 main requests; high \u2192 high)"
+    },
+    {
+      "model": "deepseek-flash",
+      "requested": "low",
+      "actual": "low",
+      "passed": true,
+      "tools": true,
+      "seconds": 9,
+      "verification": "Actual HTTPS parameters: PASS (4 main requests; low \u2192 low)"
+    },
+    {
+      "model": "deepseek-flash",
+      "requested": "max",
+      "actual": "max",
+      "passed": true,
+      "tools": true,
+      "seconds": 9,
+      "verification": "Actual HTTPS parameters: PASS (4 main requests; max \u2192 max)"
+    },
+    {
+      "model": "deepseek-flash",
+      "requested": "medium",
+      "actual": "high",
+      "passed": true,
+      "tools": true,
+      "seconds": 9,
+      "verification": "Actual HTTPS parameters: PASS (4 main requests; medium \u2192 high)"
+    },
+    {
+      "model": "deepseek-flash",
+      "requested": "minimal",
+      "actual": "low",
+      "passed": true,
+      "tools": false,
+      "seconds": 6,
+      "verification": "Actual HTTPS parameters: PASS (2 main requests; minimal \u2192 low)"
+    },
+    {
+      "model": "deepseek-flash",
+      "requested": "none",
+      "actual": "none",
+      "passed": true,
+      "tools": true,
+      "seconds": 8,
+      "verification": "Actual HTTPS parameters: PASS (4 main requests; none \u2192 none)"
+    },
+    {
+      "model": "deepseek-flash",
+      "requested": "ultra",
+      "actual": "max",
+      "passed": true,
+      "tools": false,
+      "seconds": 6,
+      "verification": "Actual HTTPS parameters: PASS (2 main requests; ultra \u2192 max)"
+    },
+    {
+      "model": "deepseek-flash",
+      "requested": "xhigh",
+      "actual": "high",
+      "passed": true,
+      "tools": false,
+      "seconds": 6,
+      "verification": "Actual HTTPS parameters: PASS (2 main requests; xhigh \u2192 high)"
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "requested": "default",
+      "actual": "high",
+      "passed": true,
+      "tools": false,
+      "seconds": 7,
+      "verification": "Actual HTTPS parameters: PASS (2 main requests; default \u2192 high)"
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "requested": "high",
+      "actual": "high",
+      "passed": true,
+      "tools": true,
+      "seconds": 11,
+      "verification": "Actual HTTPS parameters: PASS (4 main requests; high \u2192 high)"
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "requested": "low",
+      "actual": "low",
+      "passed": true,
+      "tools": true,
+      "seconds": 11,
+      "verification": "Actual HTTPS parameters: PASS (4 main requests; low \u2192 low)"
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "requested": "max",
+      "actual": "max",
+      "passed": true,
+      "tools": true,
+      "seconds": 11,
+      "verification": "Actual HTTPS parameters: PASS (4 main requests; max \u2192 max)"
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "requested": "medium",
+      "actual": "high",
+      "passed": true,
+      "tools": true,
+      "seconds": 12,
+      "verification": "Actual HTTPS parameters: PASS (4 main requests; medium \u2192 high)"
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "requested": "minimal",
+      "actual": "low",
+      "passed": true,
+      "tools": false,
+      "seconds": 6,
+      "verification": "Actual HTTPS parameters: PASS (2 main requests; minimal \u2192 low)"
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "requested": "none",
+      "actual": "none",
+      "passed": true,
+      "tools": true,
+      "seconds": 10,
+      "verification": "Actual HTTPS parameters: PASS (4 main requests; none \u2192 none)"
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "requested": "ultra",
+      "actual": "max",
+      "passed": true,
+      "tools": false,
+      "seconds": 8,
+      "verification": "Actual HTTPS parameters: PASS (2 main requests; ultra \u2192 max)"
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "requested": "xhigh",
+      "actual": "high",
+      "passed": true,
+      "tools": false,
+      "seconds": 8,
+      "verification": "Actual HTTPS parameters: PASS (2 main requests; xhigh \u2192 high)"
+    }
+  ],
+  "pluginVersion": "0.1.1",
+  "scope": "Generated host bridge against real DeepSeek API; actual HTTPS control fields observed; completed turns and restored context. Not a browser UI test."
+}

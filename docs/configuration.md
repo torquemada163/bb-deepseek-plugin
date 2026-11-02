@@ -21,6 +21,12 @@ The plugin uses its persistent host data directory for private XDG config, data,
 
 No key is bundled in the npm package. `.env` files are ignored by Git, except the empty `.env.example` template. Credential paths are host-local: remote browser access does not move your credentials to the browser machine.
 
+## Reasoning compatibility
+
+Both models support Off (thinking disabled), Low, High, and Max. Default uses High. The plugin also accepts bb's inherited `medium` setting at provider registration, then normalizes it to `high` before ACP dispatch on session start, restore, and each turn. `xhigh` maps to `high`; `ultra` to `max`; the API alias `minimal` to `low`.
+
+These mappings follow [DeepSeek's thinking-mode documentation](https://api-docs.deepseek.com/guides/thinking_mode/). The API toggle and effort are separate: Off sends `thinking.type=disabled`; the other modes send `thinking.type=enabled` and the selected `reasoning_effort`.
+
 ## Permissions
 
 The provider exposes `accept-edits` and `full` through bb's shared ACP adapter. Workspace writes are allowed in `accept-edits`; terminal commands and access outside the workspace may ask for approval. `full` permits broader actions. These modes are not a kernel sandbox. The plugin passes no bypass flag to OpenCode.

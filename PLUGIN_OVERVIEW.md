@@ -5,7 +5,7 @@ Choose DeepSeek in bb and work with Flash or V4 Pro using your own API key. Stre
 ## What you get
 
 - A dedicated DeepSeek provider with its own model picker and branding.
-- Flash and V4 Pro with High and Max reasoning controls.
+- Flash and V4 Pro with Off, Low, High, and Max reasoning controls.
 - File and terminal tools supplied by OpenCode.
 - Session restore and host-local credential loading.
 - Separate OpenCode configuration, data, cache, and state.

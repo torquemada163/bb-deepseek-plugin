@@ -8,7 +8,7 @@
 
 ## Реализация 2026-11-02
 
-- Пакет `bb-plugin-deepseek` 0.1.0, независимый provider id `deepseek`.
+- Исходный пакет `bb-plugin-deepseek` 0.1.0, независимый provider id `deepseek`. Текущее исправление 0.1.1 описано ниже.
 - BB 0.48.1; публичный Plugin SDK 0.6.104. Использован skill bb-plugin-authoring и актуальные SDK declarations.
 - Архитектура: сервер регистрирует провайдера; host.ts оборачивает публичный ACP bridge; OpenCode CLI исполняет инструменты, DeepSeek предоставляет модель через HTTPS API.
 - Ключ читается только в host bridge из абсолютного envFile. В настройки/server provider options попадает только путь. Сгенерированный конфиг содержит env-ссылку; ключ только в окружении дочернего процесса.
@@ -16,7 +16,7 @@
 - Доступность ключа проверена GET /models: `deepseek-flash`, `deepseek-v4-pro`.
 - Установленный глобальный OpenCode был 1.14.20. Для проверки установлен локальный devDependency `opencode-ai` 1.19.5. В npm postinstall сначала не нашёл платформенный пакет; установили `opencode-darwin-arm64@1.19.5` локально и запустили postinstall. Локальный `node_modules/opencode-ai/bin/opencode.exe` на macOS — Mach-O binary, несмотря на расширение.
 - Изначальный `@ai-sdk/deepseek` в конфиге требовал динамической установки и не запускался. Исправлено на встроенный в OpenCode `@ai-sdk/openai-compatible`; реальный Flash/high ответил маркером через dist/host.js.
-- Каталог ограничен двумя актуальными моделями. Автоматический Low вариант OpenCode отключён; проверяются High/Max. Лимиты из официальной страницы: 1M context, 384K output. Фактические ограничения исполнения зависят от OpenCode.
+- Каталог ограничен двумя актуальными моделями. В 0.1.0 Low ошибочно отключили; исправлено в 0.1.1 (см. ниже). Исходно проверяли только High/Max. Лимиты из официальной страницы: 1M context, 384K output. Фактические ограничения исполнения зависят от OpenCode.
 - README, PLUGIN_OVERVIEW, docs, CHANGELOG, skill, MIT license, DeepSeek SVG с атрибуцией Lobe Icons, CI Ubuntu/macOS Node22, release workflow и Dependabot подготовлены.
 - Плагин установлен локально в bb как path install; envFile направлен на .env проекта, executable на локальный OpenCode 1.19.5. Живой `bb provider models deepseek --json` подтвердил обе модели и High/Max; `bb provider list --json` показывает DeepSeek available=true и собственный logoUrl.
 
@@ -28,7 +28,7 @@
 
 Повторный итоговый прогон typecheck, всех 6 unit tests, 18 conformance сценариев, build, clean install, package contents и git diff --check успешен. Ключ не найден в исходниках или dist; .env chmod 600 и gitignored. Release-notes v0.1.0 генерируются успешно. CI/workflows подготовлены, но GitHub Actions ещё не запускались, так как remote не подключён. Плагин после окончательной сборки перезагружен и работает.
 
-Нужен реальный URL удалённого репозитория от пользователя перед назначением remote/push. Никаких push/tag/release не делалось. Git-репозиторий изначально был пустой. Готовая базовая реализация сохранена первым коммитом; посмотреть `git log -1`. До получения URL от пользователя работа по плагину завершена, remote не настроен.
+Нужен реальный URL удалённого репозитория от пользователя перед назначением remote/push. Никаких push/tag/release не делалось. Git-репозиторий изначально был пустой. Готовая базовая реализация сохранена первым коммитом; посмотреть `git log -1`. Remote пока не настроен. После исходной реализации пользователь сообщил об ошибке уровней размышлений; продолжение ниже.
 
 ## Команды
 
@@ -42,3 +42,26 @@
 - `bb provider models deepseek --json`
 
 У npm cache в домашней папке есть root-owned файлы. Не исправлять чужие права: использовать `--cache /private/tmp/bb-deepseek-npm-cache`. Проверочные скрипты теперь берут отдельный writable tmp cache (переопределение BB_DEEPSEEK_NPM_CACHE). Дочернему OpenCode тоже выставлен отдельный npm_config_cache.
+
+
+## Исправление уровней размышлений 2026-11-02, версия 0.1.1
+
+Пользователь прислал скриншот: `Provider deepseek does not support medium reasoning level. Supported reasoning levels: high, max`. Просил исправить и самостоятельно проверить обе модели на всех уровнях. Публикацию по-прежнему не запрашивал.
+
+Причина: сервер bb по умолчанию подставляет medium до запуска host bridge и проверяет capabilities провайдера. Только нормализации в host.ts недостаточно: medium надо объявить в server.ts. Сверили источник в checkout BB (`apps/server/src/services/threads/thread-execution-plan.ts`) и актуальную документацию https://api-docs.deepseek.com/guides/thinking_mode/.
+
+Реализовано:
+
+- `src/reasoning.ts` — единая таблица: none → none (thinking disabled), minimal/low → low, default/medium/high/xhigh → high, max/ultra → max.
+- BB provider capabilities принимают none/low/medium/high/xhigh/max/ultra. Minimal — API alias, отсутствует в enum BB picker, но host нормализует его для совместимости.
+- `host.ts` нормализует params.options перед ACP dispatch, в том числе start/resume/turn.
+- OpenCode catalog: Default, Off/None, Low, High, Max. Default явно задан как High. Живой каталог показывает defaultReasoningEffort=default; actual API default = High.
+- В thinking disabled запрос может содержать reasoning_effort=high, унаследованный из model options; DeepSeek успешно отвечает, уровень игнорируется при disabled. Включённые режимы передают low/high/max точно.
+- `scripts/api-observer.ts`: только opt-in live test, временный локальный HTTPS reverse proxy с временным доверенным сертификатом и проверкой TLS на обоих соединениях. Forward только на официальный DeepSeek API. Проверяет настоящие model/thinking/reasoning_effort и HTTP status, не записывает ключ/заголовки/промпты/ответы. Служебные title/summary запросы OpenCode отделяются по точному началу system prompt — у них собственный reasoning effort.
+- `scripts/smoke-matrix.ts` запускает обе модели по всем 9 уровням/алиасам (18 сценариев), максимум два процесса одновременно. Каждый сценарий проверяет два завершённых хода с release/resume и воспроизведением случайного маркера из истории. None/Low/High/Max и Medium также реально читают и записывают файл.
+- Исправлена ошибка smoke.ts: нельзя вызывать bridge.onClose() перед process.exit, потому что общий ACP bridge сам может завершить процесс кодом 0 даже после проваленной проверки. Теперь неуспешный smoke возвращает ненулевой exit code.
+- Обновлены README, docs, skill, CHANGELOG, package/lockfile до 0.1.1. Unit regression проверяет все mappings на start/resume/turn и наличие medium в регистрации. Conformance использует medium, providerId теперь правильный deepseek.
+
+Первый полный промежуточный прогон дал 16/16 PASS. Окончательный прогон 0.1.1: **18/18 PASS** (обе модели × default/none/minimal/low/medium/high/xhigh/max/ultra), **36 завершённых ходов**, 18 release/resume, 10 сценариев с file read/write. В каждом проверены actual HTTPS thinking/reasoning_effort и успешные ответы. Отчёт без секретов сохранён в `docs/reasoning-verification.json`. Итоговый bb provider list показывает medium с меткой Medium → High; плагин 0.1.1 перезагружен и available=true.
+
+Итоговые проверки 0.1.1: typecheck, 8 unit tests, 18 offline conformance, build, clean production install, package contents и release-notes generator успешны. Браузерный UI/thread creation напрямую не автоматизировали; исправление pre-dispatch medium подтверждено регистрацией живого провайдера и SDK-тестом. Код и память сохранены отдельным локальным коммитом, без push/tag/release.

@@ -1,6 +1,6 @@
 {
   "name": "bb-plugin-deepseek",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "engines": {
     "node": ">=22",
@@ -55,7 +55,8 @@
     "test": "tsx --test test/*.test.ts && tsx test/conformance.ts",
     "smoke": "tsx scripts/smoke.ts",
     "check:install": "node scripts/check-git-install.mjs",
-    "check:package": "node scripts/check-package.mjs"
+    "check:package": "node scripts/check-package.mjs",
+    "smoke:matrix": "tsx scripts/smoke-matrix.ts"
   },
   "keywords": [
     "bb",

@@ -13,7 +13,8 @@ This plugin registers `deepseek` and runs an isolated OpenCode CLI over ACP.
 - List models with `bb provider models deepseek --json`.
 - Model IDs in bb are `deepseek/deepseek-flash` and `deepseek/deepseek-v4-pro`.
 - Change the default with `bb plugin config deepseek set model deepseek-v4-pro`.
-- Reasoning controls are High and Max; the ACP Default variant uses High.
+- Reasoning controls are Off, Low, High, and Max; the ACP Default variant uses High.
+- BB inherits Medium before thread dispatch: declare it as supported, then map it to High in the host bridge. Extra High also maps to High; Ultra maps to Max; the API alias Minimal maps to Low.
 - API usage is charged to the DeepSeek Platform account.
 
 Never print, request in chat, or copy an API key into provider options, command arguments, diagnostics, or a repository. The plugin reads credentials only on the host. Do not alter other providers or the standalone OpenCode setup to fix this provider.
