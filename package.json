@@ -30,7 +30,7 @@
     "cron-parser": "^5.5.0",
     "hono": "^4.11.9",
     "tsx": "^4.20.0",
-    "typescript": "^5.7.0",
+    "typescript": "^7.0.2",
     "opencode-ai": "1.19.5"
   },
   "description": "Independent DeepSeek coding agent provider for BB, powered by OpenCode ACP.",
