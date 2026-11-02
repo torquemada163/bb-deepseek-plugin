@@ -12,7 +12,11 @@ Choose DeepSeek in bb and work with Flash or V4 Pro using your own API key. Stre
 
 ## Setup
 
-Install OpenCode 1.19.5 or newer on your execution host. Save a DeepSeek API key in a private dotenv file, then set the absolute file path in the DeepSeek plugin settings. Select DeepSeek in a new thread and choose a model.
+Install OpenCode 1.19.5 or newer separately on every execution host; the bb plugin installer does not install the CLI. Devices used only to browse bb do not need OpenCode. Save a DeepSeek API key in a private dotenv file, then set the absolute file path in the DeepSeek plugin settings. Select DeepSeek in a new thread and choose a model.
+
+## Model and runtime
+
+DeepSeek supplies the model; OpenCode supplies the agent instructions, tools, and session handling. The assistant may introduce itself as OpenCode for this reason. The selected model and API billing remain with DeepSeek; this connection needs no separate OpenCode subscription or login.
 
 ## Requirements and limits
 

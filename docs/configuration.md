@@ -11,6 +11,12 @@ Open **Settings → Plugins → DeepSeek** or use `bb plugin config deepseek set
 
 The key is sent to the configured API endpoint. Only use an endpoint you trust. Credentials, query strings, and fragments in the endpoint URL are rejected.
 
+## Required OpenCode runtime
+
+Install OpenCode 1.19.5+ separately on each execution host. The plugin installer installs the plugin's runtime dependencies, but does not install the OpenCode CLI. Check `opencode --version`, then set `executable` to the full path if bb cannot find it on PATH. A remote browser or phone only needs access to bb; the CLI and credential file belong on the host running the agent.
+
+This integration uses OpenCode's agent loop, system instructions, tools, and session storage with DeepSeek as the model. The assistant may call itself OpenCode because of those system instructions; its model is still the selected DeepSeek API model. No separate OpenCode subscription or login is needed for this provider.
+
 ## Isolation and secrets
 
 The plugin registers only `deepseek`. It reads the dotenv file in its host bridge process, limits that file to 64 KiB, and requires a nonempty single-line key. It does not pass the key through server settings, provider options, or plugin diagnostics.

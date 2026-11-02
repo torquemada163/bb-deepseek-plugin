@@ -28,7 +28,7 @@ Run **DeepSeek Flash** and **DeepSeek V4 Pro** as a separate provider in [bb](ht
 
 ## Install
 
-Install [OpenCode](https://opencode.ai/docs/) **1.19.5 or newer** on the machine running your agents. The plugin does not download or upgrade your global CLI.
+**OpenCode is required separately.** Install [OpenCode](https://opencode.ai/docs/) **1.19.5 or newer** on every machine that runs your agents, then check `opencode --version`. Installing this bb plugin does not install OpenCode. If you access bb through a remote browser, install OpenCode on the execution host; the browser device does not need it.
 
 Add this repository in bb's plugin installer, or run:
 
@@ -97,6 +97,10 @@ flowchart LR
   Agent -->|HTTPS| API[DeepSeek API]
   Agent --> Tools[Files · terminal · MCP]
 ```
+
+**DeepSeek is the model; OpenCode is the agent runtime.** DeepSeek generates responses through its API. OpenCode supplies the agent loop, system instructions, file and terminal tools, and session handling. bb presents the conversation and manages the provider connection. Because OpenCode supplies the system instructions, the assistant may introduce itself as OpenCode while correctly reporting a DeepSeek model ID. This does not mean a different model is answering.
+
+A separate OpenCode subscription or provider login is not required for this connection: the plugin uses your DeepSeek API key, and DeepSeek bills the model requests. An independently installed OpenCode CLI is still required.
 
 The bb server stores a path to your credentials file. The bridge reads the key on the execution host and passes it to the agent process. Generated configuration uses an environment reference; the plugin does not write the API key into its configuration files.
 

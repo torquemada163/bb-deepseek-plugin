@@ -27,7 +27,7 @@ DEEPSEEK_EXECUTABLE=/absolute/path/to/opencode npm run smoke
 
 Choose a model and effort through `DEEPSEEK_SMOKE_MODEL` (for example `deepseek/deepseek-v4-pro`) and `DEEPSEEK_SMOKE_REASONING` (`none`, `low`, `high`, `max`, or a supported alias). The test uses a temporary workspace and isolated agent storage. It waits for a completed turn, releases the session, restores it, and checks a second response against remembered context. Set `DEEPSEEK_SMOKE_TOOLS=1` to also verify actual file reading and writing.
 
-The development dependency `opencode-ai` pins the tested CLI version for local smoke runs. It is not shipped to end users. With lifecycle scripts disabled, its executable may need initialization: run `node node_modules/opencode-ai/postinstall.mjs`, or use a separately installed CLI. On macOS the local executable is `node_modules/opencode-ai/bin/opencode.exe` despite the suffix.
+The development dependency `opencode-ai` pins the tested CLI version for local smoke runs. On the original development host, the plugin is configured to use this local binary; this is a development convenience and does not make OpenCode part of a normal Git/npm plugin installation. It is not shipped to end users. With lifecycle scripts disabled, its executable may need initialization: run `node node_modules/opencode-ai/postinstall.mjs`, or use a separately installed CLI. On macOS the local executable is `node_modules/opencode-ai/bin/opencode.exe` despite the suffix.
 
 For the complete paid verification matrix:
 
