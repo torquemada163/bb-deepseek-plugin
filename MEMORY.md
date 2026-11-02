@@ -2,7 +2,7 @@
 
 ## Задача и договорённости
 
-Пользователь попросил создать отдельный плагин DeepSeek для bb по образцу `/Users/torquemada163/dev/bb-kimicode-plugin`, с таким же уровнем оформления и проверок. Ключ уже был в локальном `.env`. Пользователь пока готовит удалённый GitHub-репозиторий; публикацию и push не запрашивал. Подтверждённый remote origin: `https://github.com/torquemada163/bb-deepseek-plugin.git` (пользователь подключил его после реализации).
+Пользователь попросил создать отдельный плагин DeepSeek для bb по образцу `/Users/torquemada163/dev/bb-kimicode-plugin`, с таким же уровнем оформления и проверок. Ключ уже был в локальном `.env`. Пользователь пока готовит удалённый GitHub-репозиторий; публикацию и push не запрашивал. Remote origin: `git@github.com:torquemada163/bb-deepseek-plugin.git` для fetch и push; пользователь явно выбрал SSH.
 
 Общение на русском. Правила продолжения и завершения сессии в `AGENTS.md`. Эта память не содержит ключей.
 
@@ -82,6 +82,17 @@ origin уже подключён пользователем и проверен:
 
 Пользователь явно разрешил push и релизы: «Отправляй. Сделай все красиво, как ты Kimi делал. Со всеми этими релизами и прочим». Разрешение включает загрузку main, оформление репозитория, CI и GitHub Release; публикацию в npm или Community marketplace отдельно не запрашивал. Первый публичный релиз — v0.1.1, без выпуска устаревшей исходной 0.1.0.
 
-origin публичный, изначально пустой. gh auth не настроен, но Git credential helper osxkeychain имеет рабочие credentials. Для gh используется временный /private/tmp/bb-deepseek-gh.py: читает credential fill в память, передаёт токен только окружением дочернего gh, не печатает и не сохраняет токен. В проекте credentials отсутствуют.
+origin публичный, изначально пустой. gh auth не настроен. Default HTTPS credential принадлежит jmix-readonly и не имеет write-доступа к этому репозиторию (403); не использовать его для публикации. SSH-проверка подтвердила torquemada163, как у Kimi. Пользователь явно попросил заменить origin целиком на SSH; это выполнено для fetch и push. Для read-only статуса Actions используется публичный GitHub REST API без авторизации. Ключей/токенов в проекте нет.
 
 Добавлены README release badge и установка/обновление по semver range. Release notes расширены описанием моделей, режимов, OpenCode, настройки и проверок; ссылка сравнения формируется только при существующем предыдущем теге. Идёт публикация и проверка Actions.
+
+
+### Результаты публикации
+
+main отправлен по SSH: 413960a (Prepare first public DeepSeek release). CI на этом коммите прошёл: https://github.com/torquemada163/bb-deepseek-plugin/actions/runs/41494773096. Аннотированный тег v0.1.1 отправлен на этот же коммит; Release workflow: https://github.com/torquemada163/bb-deepseek-plugin/actions/runs/41495438549. После push сработал Dependabot и открыл отдельные major PR; автоматически не сливать их.
+
+Проверена реальная публичная установка из Git-тега: свежий clone v0.1.1 во временную папку, npm ci --omit=dev --omit=optional --ignore-scripts, bb plugin build — успешно.
+
+Браузер открывали только для About metadata (описание/темы); пользователь предпочёл CLI/SSH. Несохранённая форма отменена, созданная нами вкладка закрыта; metadata через браузер не менялась. Публикация Git и тега выполнена через SSH, релиз создаёт GitHub Actions.
+
+Release workflow завершён успешно: оба checks (Ubuntu/macOS) и Publish GitHub Release — success. Проверен latest release: https://github.com/torquemada163/bb-deepseek-plugin/releases/tag/v0.1.1, не draft/prerelease; описание содержит требования OpenCode и установку. Тег неизменяемый, указывает на 413960a. Итоговое обновление памяти — отдельный docs-коммит после релиза, без изменения runtime/версии/тега.
