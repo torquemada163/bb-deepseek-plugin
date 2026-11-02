@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 
@@ -9,10 +10,16 @@ const index = sections.findIndex(section => section.startsWith(`${manifest.versi
 assert.ok(index >= 0, 'A dated changelog entry is required');
 const body = sections[index].slice(sections[index].indexOf('\n') + 1).trim();
 const previous = sections[index + 1]?.match(/^(\d+\.\d+\.\d+)/)?.[1];
+const previousExists = previous && spawnSync('git', ['rev-parse', '--verify', `refs/tags/v${previous}`], { stdio: 'ignore' }).status === 0;
 const repository = manifest.repository.url.replace(/^git\+/, '').replace(/\.git$/, '');
-process.stdout.write(`# DeepSeek for bb ${tag}\n\n${body}\n\n`);
-process.stdout.write(`## Install\n\nRequires bb 0.48.1+, OpenCode 1.19.5+, and a DeepSeek Platform API key with balance.\n\n`);
+process.stdout.write(`# DeepSeek for bb ${tag}\n\n`);
+process.stdout.write(`Run DeepSeek Flash and V4 Pro as a dedicated coding agent in bb, powered by OpenCode over ACP. Use your own DeepSeek API key with isolated host storage and credentials.\n\n`);
+process.stdout.write(`## What you get\n\n- DeepSeek Flash and V4 Pro in bb's model picker, with the DeepSeek mark.\n- Off, Low, High, and Max reasoning; Default uses High.\n- Compatible inherited settings: Medium/Extra High → High, Minimal → Low, Ultra → Max.\n- File and terminal tools, streamed responses, and restored conversations through OpenCode.\n\n`);
+process.stdout.write(`## Changes\n\n${body}\n\n`);
+process.stdout.write(`## Install\n\nRequires bb 0.48.1+, a separately installed OpenCode 1.19.5+ CLI on the execution host, and a DeepSeek Platform API key with balance. The plugin does not install OpenCode. API usage is billed by DeepSeek; no separate OpenCode subscription or login is needed.\n\n`);
 process.stdout.write(`\`\`\`sh\nbb plugin install git:${repository}.git@${tag}\n\`\`\`\n\n`);
+process.stdout.write(`After installation, set **API key dotenv file** in **Settings → Plugins → DeepSeek** to an absolute host path containing \`DEEPSEEK_API_KEY\`. Set **OpenCode executable** if PATH discovery is unavailable. Select DeepSeek in a new thread.\n\n`);
 process.stdout.write(`For an existing managed Git installation, run \`bb plugin update deepseek\`.\n\n`);
 process.stdout.write(`## Checks\n\nTypeScript, credential and configuration tests, public-SDK bridge conformance, a clean production-only install build, and publication content checks run before release. Live API smoke checks are separate and are not run in CI.\n\n`);
-process.stdout.write(`[Setup and configuration](${repository}#connect-your-account) · [DeepSeek API documentation](https://api-docs.deepseek.com/)${previous ? ` · [Full changelog](${repository}/compare/v${previous}...${tag})` : ''}\n`);
+process.stdout.write(`[Local real-model verification report](${repository}/blob/${tag}/docs/reasoning-verification.json): both models were tested across all documented levels and aliases, including file tools and release/restore. See the report version and timestamp for its scope.\n\n`);
+process.stdout.write(`[Setup and configuration](${repository}#connect-your-account) · [DeepSeek API documentation](https://api-docs.deepseek.com/)${previousExists ? ` · [Full changelog](${repository}/compare/v${previous}...${tag})` : ''}\n`);

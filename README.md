@@ -7,6 +7,7 @@
 **Your DeepSeek API key. A dedicated coding agent in bb.**
 
 [![CI](https://github.com/torquemada163/bb-deepseek-plugin/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/torquemada163/bb-deepseek-plugin/actions/workflows/check.yml)
+[![Release](https://img.shields.io/github/v/release/torquemada163/bb-deepseek-plugin)](https://github.com/torquemada163/bb-deepseek-plugin/releases/latest)
 [![bb](https://img.shields.io/badge/bb-0.48.1%2B-6366f1)](https://getbb.app)
 [![OpenCode](https://img.shields.io/badge/OpenCode-1.19.5%2B-4D6BFE)](https://opencode.ai)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
@@ -37,6 +38,14 @@ bb plugin install https://github.com/torquemada163/bb-deepseek-plugin
 ```
 
 BB installs runtime dependencies and builds the plugin. A normal installation needs no manual clone or npm build.
+
+To follow compatible tagged releases instead of the default branch:
+
+```sh
+bb plugin install 'git:https://github.com/torquemada163/bb-deepseek-plugin.git@^0.1.1'
+```
+
+Update a managed Git installation with `bb plugin update deepseek`. See [release notes](https://github.com/torquemada163/bb-deepseek-plugin/releases) for requirements and changes.
 
 **Requirements:** bb **0.48.1+** with Plugin SDK **0.6.104+**, OpenCode **1.19.5+**, and a [DeepSeek Platform](https://platform.deepseek.com/) API key with sufficient balance. API usage is billed by DeepSeek; a web chat account does not provide free API usage. Development checks target Node 22, macOS, and Linux.
 
